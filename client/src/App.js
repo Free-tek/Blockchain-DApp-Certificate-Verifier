@@ -231,18 +231,7 @@ class App extends Component {
       simpleStorage.setProvider(web3.currentProvider);
 
 
-      web3.eth.getAccounts((error, accounts) => {
-        simpleStorage.deployed().then((instance) => {
-          this.simpleStorageInstance = instance
-          this.setState({ account: accounts[0] })
-          // Get the value from the contract to prove it worked.
-          return this.simpleStorageInstance.get.call("Oyinkansola", "Ifarajimi", "PHI/2015/014")
-        }).then((ipfsHash) => {
-          // Update state with the result.
-          console.log('result gotten', ipfsHash);
-          return this.setState({ ipfsHash })
-        })
-      })
+      
       
 
     }
