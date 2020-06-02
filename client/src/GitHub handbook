@@ -1,0 +1,28 @@
+GitHub handbook
+
+****push for first commit****
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin <project url>
+git push -f origin master
+
+
+****update of code base****
+git add .
+git status
+git commit -m "Update made"
+git push
+
+
+
+git reset --hard HEAD resets your changes back to the last commit that your local repo has tracked. If you made a commit, did not push it to GitHub, and want to throw that away too,
+
+Git clean -df will discard any new files or directories that you may have added, in case you want to throw those away. If you haven't added any, you don't have to run this.
+
+git pull (or if you are using git shell with the GitHub client) git sync will get the new changes from GitHub.
+
+Edit from way in the future: I updated my git shell the other week and noticed that the git sync command is no longer defined by default. For the record, typing git sync was equivalent to git pull && git push in bash. I find it still helpful so it is in my bashrc.
+
+
+
