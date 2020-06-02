@@ -28,6 +28,24 @@ class App extends Component {
 
     console.log("i got here")
 
+
+
+    getWeb3
+    .then(results => {
+      this.setState({
+        web3: results.web3
+      })
+
+      // Instantiate contract once web3 provided.
+      this.instantiateContract()
+    })
+    .catch(() => {
+      console.log('Error finding web3.')
+    })
+
+
+
+    /*
     // Modern dapp browsers...
     if (window.ethereum) {
       this.state.web3 = window.ethereum;
@@ -48,8 +66,10 @@ class App extends Component {
     else {
       this.state.web3 = new getWeb3.providers.HttpProvider('http://127.0.0.1:7545');
     }
-
+    
     this.instantiateContract()
+    */
+
 
 
   }
@@ -72,6 +92,8 @@ class App extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
+
+
   instantiateContract() {
     /*
      * SMART CONTRACT EXAMPLE
@@ -82,8 +104,8 @@ class App extends Component {
     //const web3 = getWeb3();
 
 
-
-
+    
+    /*
     console.log("got here contract 1")
 
     var json = require('./SimpleStorage.json');
@@ -95,10 +117,6 @@ class App extends Component {
     const web3 = new Web3(window.web3.currentProvider);
     
     simpleStorage.setProvider(web3.currentProvider);
-
-
-    
-
 
     // Get accounts.
     web3.eth.getAccounts((error, accounts) => {
@@ -112,14 +130,29 @@ class App extends Component {
         return this.setState({ ipfsHash })
       })
     })
-
-  
-
+    */
 
 
+    const contract = require('truffle-contract')
+    const simpleStorage = contract(SimpleStorageContract)
+    simpleStorage.setProvider(this.state.web3.currentProvider)
+
+    // Get accounts.
+    this.state.web3.eth.getAccounts((error, accounts) => {
+      simpleStorage.deployed().then((instance) => {
+        this.simpleStorageInstance = instance
+        this.setState({ account: accounts[0] })
+        // Get the value from the contract to prove it worked.
+        return this.simpleStorageInstance.get.call("Adewole", "Babatunde", "MCB/2013/024")
+      }).then((ipfsHash) => {
+        // Update state with the result.
+        console.log("ipfsHash", ipfsHash)
+        return this.setState({ ipfsHash })
+      })
+    })
 
 
-
+    
 
 
 
@@ -186,6 +219,8 @@ class App extends Component {
 
   } 
 
+
+
   captureFile(event){
     console.log('captureFile....')
     event.preventDefault()
@@ -217,21 +252,35 @@ class App extends Component {
       alert("Matriculation Number cannot be empty");
       document.getElementById('matricNo').innerHTML = "Matriculation Number cannot be empty";
     }else{
-      
-      
-      console.log('submit....')
+            
 
-      var json = require('./SimpleStorage.json');
-    
+
+      
+      console.log('submit...')
+
+      //-----set
+      /*
+      ipfs.files.add(this.state.buffer, (error, result) => {
+        if(error) {
+          console.error(error)
+          return
+        }
+        this.simpleStorageInstance.set("Oyinkansola", "Ifarajimi", "PHI/2015/014", result[0].hash, { from: this.state.account }).then((r) => {
+          return this.setState({ ipfsHash: result[0].hash })
+          console.log('ifpsHash', this.state.ipfsHash)
+        })
+      })
+      */
+
+
+      //----get
+      
       const contract = require('truffle-contract')
-      const simpleStorage = contract(json)
+      const simpleStorage = contract(SimpleStorageContract)
+      simpleStorage.setProvider(this.state.web3.currentProvider)
 
-      const web3 = new Web3(window.web3.currentProvider);
-    
-      simpleStorage.setProvider(web3.currentProvider);
-
-
-      web3.eth.getAccounts((error, accounts) => {
+      // Get accounts.
+      this.state.web3.eth.getAccounts((error, accounts) => {
         simpleStorage.deployed().then((instance) => {
           this.simpleStorageInstance = instance
           this.setState({ account: accounts[0] })
@@ -239,11 +288,11 @@ class App extends Component {
           return this.simpleStorageInstance.get.call("Oyinkansola", "Ifarajimi", "PHI/2015/014")
         }).then((ipfsHash) => {
           // Update state with the result.
-          console.log('result gotten', ipfsHash);
+          console.log("ipfsHash", ipfsHash)
           return this.setState({ ipfsHash })
         })
       })
-      
+    
 
     }
 
