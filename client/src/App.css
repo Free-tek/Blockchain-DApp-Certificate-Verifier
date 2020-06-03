@@ -86,8 +86,6 @@
   left: 5%;
   width: 300px;
   height: 50px;
-  visibility: hidden;
-  
 }
 
 .button{
@@ -130,6 +128,46 @@
   font-weight: bold;
   font-size: 20px
 }
+
+
+.success {
+  position: absolute;
+  left: 10%;
+  width: 200px;
+  height: 170px;
+  margin-top: -30px;
+  visibility: hidden;
+}
+
+.failure {
+  position: absolute;
+  left: 10%;
+  width: 200px;
+  height: 170px;
+  margin-top: -30px;
+  visibility: hidden;
+}
+
+
+.download {
+  position: absolute;
+  left: 15%;
+  width: 50px;
+  height: 50px;
+  margin-top: 80px;
+  margin-bottom: 100px;
+  visibility: hidden;
+}
+
+.upload {
+  position: absolute;
+  left: 10%;
+  width: 230px;
+  height: 170px;
+  margin-top: -30px;
+  visibility: hidden;
+}
+
 
 
 
