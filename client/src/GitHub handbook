@@ -12,7 +12,7 @@ git push -f origin master
 git add .
 git status
 git commit -m "Update made"
-git push
+git push origin master
 
 
 

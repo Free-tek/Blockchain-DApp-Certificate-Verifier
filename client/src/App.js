@@ -226,7 +226,7 @@ class App extends Component {
         
         <div class="header">
                 <img src={logo} />
-                <h1>University of Abuja Certificate Verifier</h1>
+                <h1>Nigerian Tulip International Colleges</h1>
                 <p>Verify Candidate Certificates Stored Securely On The Blockchain.</p>
               </div>
               <br/>
@@ -245,7 +245,7 @@ class App extends Component {
                   <br/>
                   <body class="centered-wrapper">
 
-                    The University of Abuja, a leader in blockchain technology education, offers an open source platform to issue and verify digital certificates in a completely decentralized way; 
+                    Nigerian Tulip International Colleges, a leader in blockchain technology education, offers an open source platform to issue and verify digital certificates in a completely decentralized way; 
                     i.e. with no dependencies to the issuing institution or anyone else other than Bitcoin's blockchain. This site is a front-end of the open source verification software that anyone
                     can use to validate digital certificates. All graduates, in addition to getting a physical diploma, also get a PDF copy of the diploma with special metadata that anchors that certificate 
                     into the blockchain.
