@@ -65,6 +65,7 @@ class App extends Component {
     this.captureFile = this.captureFile.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.uploadCertificate = this.uploadCertificate.bind(this);
+    this.uploadQR = this.uploadQR.bind(this);
   }
 
 
@@ -106,6 +107,8 @@ class App extends Component {
 
       
   }
+
+
 
   onSubmit(event){
 
@@ -174,6 +177,60 @@ class App extends Component {
 
   }
 
+  uploadQR(event){
+    event.preventDefault()
+
+    ipfs.files.add(this.state.buffer, (error, result) => {
+      if(error) {
+        console.error(error)
+        alert("Upload Unsuccessful");
+        return
+      }
+
+      console.log('this is my result', result[0].hash)
+
+      const Http = new XMLHttpRequest();
+      const urlImage = 'https://ipfs.io/ipfs/' + result[0].hash
+      const url ='https://api.qrserver.com/v1/read-qr-code/?fileurl=' + urlImage;
+
+      Http.open("GET", url);
+      Http.send();
+
+
+      Http.onreadystatechange = function () {
+        // In local files, status is 0 upon success in Mozilla Firefox
+        if(Http.readyState === XMLHttpRequest.DONE) {
+          if (Http.responseText.split('"error":').pop().includes("null")){
+            console.log('QRCODE type', Http.responseText)
+
+            var mySubString = Http.responseText.substring(
+              Http.responseText.lastIndexOf(":") + 1, 
+              Http.responseText.lastIndexOf("\"") + 2
+            );
+
+            var url = Http.responseText.substring(Http.responseText.lastIndexOf('\"data\":\"')+8,Http.responseText.lastIndexOf('\",\"error\"'))
+            
+            window.open("https://ipfs.io/ipfs/"+url,"_self")
+
+
+          }else{
+            alert("invalid QR CODE");
+            return
+          }
+        }
+      }
+      
+
+      
+
+      return this.setState({ ipfsHash: result[0].hash })
+    })
+
+
+
+
+  }
+
 
   uploadCertificate(event) {
 
@@ -208,11 +265,55 @@ class App extends Component {
         this.simpleStorageInstance.set(firstName, surname, matricNo, result[0].hash, { from: this.state.account }).then((r) => {
           var img = document.getElementById("success2");
           img.style.visibility = "visible";
+          document.getElementById("success2").style.display = "block";
+          img.style.height = '300px'
+          img.style.width = '300px'
+
+          img.src="https://api.qrserver.com/v1/create-qr-code/?data=" + result[0].hash + "&amp;size=300x300";
+
+
+          //switch off forms
+          var formFirstName = document.getElementById("firstName2");
+          var formSurnName = document.getElementById("surname2");
+          var formMatricNo = document.getElementById("matricNo2");
+          var uploadButton = document.getElementById("upload");
+
+          var header1 = document.getElementById("header1");
+          var header2 = document.getElementById("header2");
+          var header3 = document.getElementById("header3");
+
+          var downloadQR = document.getElementById("downloadQR");
+          var successHeading = document.getElementById("successHeading");
+
+
+
+          formFirstName.style.visibility = "hidden";
+          formSurnName.style.visibility = "hidden";
+          formMatricNo.style.visibility = "hidden";
+          
+          header1.style.visibility = "hidden";
+          header2.style.visibility = "hidden";
+          header3.style.visibility = "hidden";
+
+          document.getElementById("choose").style.visibility= "hidden";
+          document.getElementById("upload").style.visibility= "hidden";
+
+          //show download QRCODE button
+          document.getElementById("downloadQR").href="https://api.qrserver.com/v1/create-qr-code/?data=" + result[0].hash + "&amp;size=300x300";
+          document.getElementById("downloadQR").style.visibility= "visible";
+          document.getElementById("successHeading").style.visibility= "visible";
+
+
+
           console.log('ifpsHash', result[0].hash)
           return this.setState({ ipfsHash: result[0].hash })
           
         })
       })
+
+
+
+      
       
     }
 
@@ -235,6 +336,7 @@ class App extends Component {
               <Tabs class="tab">
                 <TabList>
                   <Tab>Authenticate Certificate</Tab>
+                  <Tab>QRCODE</Tab>
                   <Tab>Upload Certificate</Tab>
                 </TabList>
            
@@ -295,20 +397,60 @@ class App extends Component {
                 </TabPanel>
 
                 <TabPanel>
+                <p>Upload the QRCODE to Authenticate the certificate</p>
+                <br/>
+                <br/>
+                <form class = "form" onSubmit={this.uploadQR} >
+
+                  <div class="container">
+                    <div class="center">
+
+                      <img class= 'certificateQR' id = 'certificate_result' alt=""/>
+
+                      <input class = "chooseQR" type='file' id = 'choose' onChange={this.captureFile}/><br/>
+                      
+                      <input class = "buttonQRCODE" type='submit' id = 'upload' value='VERIFY' onClick={this.uploadQR} />
+
+
+                    </div>
+                  </div>
+
+
+                  
+
+                </form>
+
+
+
+                </TabPanel>
+                
+
+                <TabPanel>
                   <p>Please note you will require administrator access to upload a student certificate</p>
                   <br/>
                   <br/>
                   <form class = "form" onSubmit={this.onSubmit} >
+                    <div>
+                      <img class= 'upload' id = 'success2' alt=""/>
+                    </div>
 
-                    <img class= 'upload' src={successUpload} id = 'success2' alt=""/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <h class = 'heading'>Student's Firstname</h><br/>
+                    <div>
+                      <a href="path_to_file" class = "downloadQR" id="downloadQR" download="proposed_file_name">Download QRCODE</a>
+                    </div>
+
+                    <div>
+                      <h class = 'successHeading' id="successHeading">Upload Successful</h><br/>
+                    </div>
+                    
+                    
+                    
+
+
+                    <h class = 'heading' id="header1">Student's Firstname</h><br/>
                     <input class= "input" type="text" id="firstName2" placeholder="Student's Firstname" /><br/>
-                    <h class = 'heading'>Student's Surname</h><br/>
+                    <h class = 'heading' id="header2" >Student's Surname</h><br/>
                     <input class= "input" type="text" id="surname2" placeholder="Student's Surname"/><br/>
-                    <h class = 'heading' >Matriculation Number</h><br/>
+                    <h class = 'heading' id="header3">Matriculation Number</h><br/>
                     <input class= "input" type="text" id="matricNo2" placeholder="Student's Matric Number"/><br/><br/>
                     <input class = "choose" type='file' id = 'choose' onChange={this.captureFile}/><br/>
                     <br/>
