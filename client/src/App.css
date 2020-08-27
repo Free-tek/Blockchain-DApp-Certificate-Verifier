@@ -167,6 +167,24 @@
   display:none
 }
 
+.button_upload{
+  position: absolute;
+  left: 5%;
+  width: 250px;
+  height: 50px;
+  border-radius: 8px;
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-top: 30px;
+}
+ 
+
 .downloadQR{
   position: absolute;
   left: 8.5%;
@@ -244,8 +262,64 @@
   width: 200px;
   height: 70px;
   text-align: center;
+  margin-top: 155px;
+}
+
+.compare{
+  position: absolute;
+  left: 5%;
+  width: 250px;
+  height: 50px;
+  border-radius: 8px;
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-top: 30px;
 }
  
+
+.box {
+  left: 5%;
+  position: absolute;
+  margin-top: 5px;
+  margin-bottom:  15px;
+  width: 210px;
+  height: 210px;
+  background: #edeeee;
+  background-size: 100% 100%;
+  border-radius: 25px;
+  border: 4px solid silver;
+  text-align: center;
+  padding: 20px 0;
+} 
+
+.capture
+{
+  width: 100px;
+  left: 7px;
+  margin-top: 300px;
+  margin-left: -80px;
+}
+
+.col-sm-1 {
+  width: 100%;
+  margin-top:  2px;
+  left: 7%;
+}
+
+.col-sm-2 {
+  width: 33.33333333%
+}
+
+.labelscore{
+  margin-top: 50px;
+}
+
 
 
 

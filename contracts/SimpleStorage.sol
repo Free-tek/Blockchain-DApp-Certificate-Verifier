@@ -9,15 +9,24 @@ contract SimpleStorage {
         string lastName;
         string matricNo;
         string ipfsHash;
-    }
+        string ipfsHashFingerprint;
+  }
+
+  struct studentInfoFingerPrint{
+        string matricNo;
+        string ipfsHashFingerprint;
+  }
     
   mapping (string => studentInfo) AllStudents;
+
+   mapping (string => studentInfoFingerPrint) AllStudentsFingerPrint;
     
 
-  function set(string memory _firstName, string memory _lastName, string memory _matricNo, string memory _ipfsHash) public {
+  function set(string memory _firstName, string memory _lastName, string memory _matricNo, string memory _ipfsHash, string memory _ipfsHashFingerprint) public {
         AllStudents[_firstName].lastName = _lastName;
         AllStudents[_firstName].matricNo = _matricNo;
         AllStudents[_firstName].ipfsHash = _ipfsHash;
+        AllStudents[_firstName].ipfsHashFingerprint = _ipfsHashFingerprint;
   }
 
   function get(string memory _firstName, string memory _lastName, string memory _matricNo) public view returns (string memory) {
@@ -31,20 +40,15 @@ contract SimpleStorage {
     
   }
 
-    function SetStudentInfo(string memory _firstName, string memory _lastName, string memory _matricNo, string memory _ipfsHash) public{
-        AllStudents[_firstName].lastName = _lastName;
-        AllStudents[_firstName].matricNo = _matricNo;
-        AllStudents[_firstName].ipfsHash = _ipfsHash;
-    }
-    
-    function GetStudentInfo(string memory _firstName, string memory _lastName, string memory _matricNo) public view returns(string memory){
+  function setFingerPrint(string memory _matricNo, string memory _ipfsHashFingerprint) public {
+    AllStudentsFingerPrint[matricNo].ipfsHashFingerprint = _ipfsHashFingerprint;
+  }
 
-    	
-    	if (keccak256(bytes(AllStudents[_firstName].lastName)) == keccak256(bytes(_lastName)) && (keccak256(bytes(AllStudents[_firstName].matricNo)) == keccak256(bytes(_matricNo)))){
-    		return AllStudents[_firstName].ipfsHash;
-    	}else{
-    		return "Invalid certiicate";
-    		}
-        
-    }
+  function getFingerPrint(string memory _matricNo) public view returns (string memory) {
+
+    return AllStudentsFingerPrint[_matricNo].ipfsHashFingerprint;
+    
+  }
+
+    
 }

@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import SimpleStorageContract from "./contracts/SimpleStorage.json";
 import getWeb3 from "./getWeb3";
-import ipfs from './ipfs'
-import $ from 'jquery'; 
+import ipfs from './ipfs';
 import TruffleContract from './truffle-config';
 import Web3 from 'web3';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -12,18 +11,33 @@ import success from './success.png'
 import successUpload from './successUpload.png'
 import failure from './failure.png'
 import download from './download.png'
+import { render } from 'react-dom';
+import * as $ from 'jquery'
+import ScriptTag from 'react-script-tag';
+import InnerHTML from 'dangerously-set-html-content'
+
+
 
 import "./App.css";
+import html from './test.html';
+import html2 from './verifyFingerprint.html';
+var htmlDoc = {__html: html};
+var fingerprintHTML = {__html: html2};
+
 
 class App extends Component {
 
   state = { storageValue: 0, web3: null, accounts: null, contract: null };
+  
 
   async componentDidMount(){
 
-    // Get network provider and web3 instance.
+
     
+    
+    // Get network provider and web3 instance.    
     this.initWeb3();
+
   };
 
   initWeb3 = async () =>{ 
@@ -47,18 +61,22 @@ class App extends Component {
 
 
   }
-  
+
+ 
 
 
   constructor(props) {
     super(props)
 
 
+    const myelement = <App brand="Ford" />;
+
     this.state = {
       storageValue: 0, 
       ipfsHash : '',
       web3: null,
       buffer: null,
+      fingerprintBuffer: null,
       account: null
     }
   
@@ -66,6 +84,9 @@ class App extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.uploadCertificate = this.uploadCertificate.bind(this);
     this.uploadQR = this.uploadQR.bind(this);
+    this.convertFingerPrintBuffer = this.convertFingerPrintBuffer.bind(this);
+    this.verifyCertificateFingerPrint = this.verifyCertificateFingerPrint.bind(this);
+
   }
 
 
@@ -106,6 +127,30 @@ class App extends Component {
     }
 
       
+  }
+
+  convertFingerPrintBuffer(event){
+    this.state.fingerprintBuffer =  new Buffer(window.fingerPrintImage, 'binary').toString('base64')
+  }
+
+  verifyCertificateFingerPrint(event){
+    event.preventDefault()
+    var matricNo = document.getElementById('matricNo').value
+    
+    if(matricNo.length==0){
+      alert("Matriculation Number cannot be empty");
+      document.getElementById('firstName').innerHTML = "Firstname cannot be empty";
+    }
+    else if(window.fingerPrintImage.length == 0){
+      alert("Please repeat fingerprint capturing");
+      document.getElementById('matricNo').innerHTML = "Matriculation Number cannot be empty";
+    }
+    else if(window.f1Score < 50){
+      alert("Faint thumb printing image, Please repeat fingerprint capturing");
+      document.getElementById('matricNo').innerHTML = "Matriculation Number cannot be empty";
+    }
+
+
   }
 
 
@@ -234,6 +279,9 @@ class App extends Component {
 
   uploadCertificate(event) {
 
+    
+    console.log("this is the fingerprintImage", window.fingerPrintImage);
+
     event.preventDefault()
     var firstName = document.getElementById('firstName2').value
     var surname = document.getElementById('surname2').value
@@ -248,7 +296,23 @@ class App extends Component {
     }else if(matricNo.length == 0){
       alert("Matriculation Number cannot be empty");
       document.getElementById('matricNo').innerHTML = "Matriculation Number cannot be empty";
-    }else{
+    }
+    /*
+    else if(window.fingerPrintImage.length == 0){
+      alert("Please repeat fingerprint capturing");
+      document.getElementById('matricNo').innerHTML = "Matriculation Number cannot be empty";
+    }
+    */
+    /*
+    else if(window.f1Score < 50){
+      alert("Faint thumb printing image, Please repeat fingerprint capturing");
+      document.getElementById('matricNo').innerHTML = "Matriculation Number cannot be empty";
+    }
+    */
+
+    
+
+    else{
             
 
 
@@ -262,54 +326,71 @@ class App extends Component {
           alert("Upload Unsuccessful");
           return
         }
-        this.simpleStorageInstance.set(firstName, surname, matricNo, result[0].hash, { from: this.state.account }).then((r) => {
-          var img = document.getElementById("success2");
-          img.style.visibility = "visible";
-          document.getElementById("success2").style.display = "block";
-          img.style.height = '300px'
-          img.style.width = '300px'
+        ipfs.files.add(this.state.fingerprintBuffer, (error, resultFingerPrint) => {
+          if(error) {
+            console.error(error)
+            alert("Upload Unsuccessful");
+            return
+          }
 
-          img.src="https://api.qrserver.com/v1/create-qr-code/?data=" + result[0].hash + "&amp;size=300x300";
+          this.simpleStorageInstance.setFingerPrint(matricNo, resultFingerPrint[0].hash, { from: this.state.account }).then((r) => {
 
+          })
 
-          //switch off forms
-          var formFirstName = document.getElementById("firstName2");
-          var formSurnName = document.getElementById("surname2");
-          var formMatricNo = document.getElementById("matricNo2");
-          var uploadButton = document.getElementById("upload");
+          this.simpleStorageInstance.set(firstName, surname, matricNo, result[0].hash, { from: this.state.account }).then((r) => {
+            
 
-          var header1 = document.getElementById("header1");
-          var header2 = document.getElementById("header2");
-          var header3 = document.getElementById("header3");
+            var img = document.getElementById("success2");
+            img.style.visibility = "visible";
+            document.getElementById("success2").style.display = "block";
+            img.style.height = '300px'
+            img.style.width = '300px'
 
-          var downloadQR = document.getElementById("downloadQR");
-          var successHeading = document.getElementById("successHeading");
-
+            img.src="https://api.qrserver.com/v1/create-qr-code/?data=" + result[0].hash + "&amp;size=300x300";
 
 
-          formFirstName.style.visibility = "hidden";
-          formSurnName.style.visibility = "hidden";
-          formMatricNo.style.visibility = "hidden";
+            //switch off forms
+            var formFirstName = document.getElementById("firstName2");
+            var formSurnName = document.getElementById("surname2");
+            var formMatricNo = document.getElementById("matricNo2");
+            var uploadButton = document.getElementById("upload");
+
+            var header1 = document.getElementById("header1");
+            var header2 = document.getElementById("header2");
+            var header3 = document.getElementById("header3");
+
+            var downloadQR = document.getElementById("downloadQR");
+            var successHeading = document.getElementById("successHeading");
+
+
+
+            formFirstName.style.visibility = "hidden";
+            formSurnName.style.visibility = "hidden";
+            formMatricNo.style.visibility = "hidden";
+            
+            header1.style.visibility = "hidden";
+            header2.style.visibility = "hidden";
+            header3.style.visibility = "hidden";
+
+            document.getElementById("choose").style.visibility= "hidden";
+            document.getElementById("upload").style.visibility= "hidden";
+
+            //show download QRCODE button
+            document.getElementById("downloadQR").href="https://api.qrserver.com/v1/create-qr-code/?data=" + result[0].hash + "&amp;size=300x300";
+            document.getElementById("downloadQR").style.visibility= "visible";
+            document.getElementById("successHeading").style.visibility= "visible";
+
+
+
+            console.log('ifpsHash', result[0].hash)
+            return this.setState({ ipfsHash: result[0].hash })
           
-          header1.style.visibility = "hidden";
-          header2.style.visibility = "hidden";
-          header3.style.visibility = "hidden";
-
-          document.getElementById("choose").style.visibility= "hidden";
-          document.getElementById("upload").style.visibility= "hidden";
-
-          //show download QRCODE button
-          document.getElementById("downloadQR").href="https://api.qrserver.com/v1/create-qr-code/?data=" + result[0].hash + "&amp;size=300x300";
-          document.getElementById("downloadQR").style.visibility= "visible";
-          document.getElementById("successHeading").style.visibility= "visible";
-
-
-
-          console.log('ifpsHash', result[0].hash)
-          return this.setState({ ipfsHash: result[0].hash })
-          
+          })
+        
         })
       })
+
+      
 
 
 
@@ -321,9 +402,10 @@ class App extends Component {
 
 
   render() {
+
     return (
 
-      <div className="App">
+      <div class="App">
         
         <div class="header">
                 <img src={logo} />
@@ -336,16 +418,17 @@ class App extends Component {
               <Tabs class="tab">
                 <TabList>
                   <Tab>Authenticate Certificate</Tab>
-                  <Tab>QRCODE</Tab>
+                  <Tab>QRCODE Authentication</Tab>
+                  <Tab>Fingerprint Authentication</Tab>
                   <Tab>Upload Certificate</Tab>
-                </TabList>
+                </TabList> 
            
                 <TabPanel>
                   
 
                   
                   <br/>
-                  <body class="centered-wrapper">
+                  <div class="centered-wrapper">
 
                     Nigerian Tulip International Colleges, a leader in blockchain technology education, offers an open source platform to issue and verify digital certificates in a completely decentralized way; 
                     i.e. with no dependencies to the issuing institution or anyone else other than Bitcoin's blockchain. This site is a front-end of the open source verification software that anyone
@@ -364,7 +447,7 @@ class App extends Component {
                     3. Wait for a confirmation message, you would also get a link to download the original certificate
                     <br/> 
 
-                  </body>
+                  </div>
                   
                   
 
@@ -420,8 +503,34 @@ class App extends Component {
 
                 </form>
 
+                </TabPanel>
+                
+
+                <TabPanel>
+                  <p>Enter Students Matriculation Number and Fingerprint to verify certificate</p>
+
+                  <h class = 'heading' id="header3">Matriculation Number</h> <br/> 
+                    <br/><br/><input class= "input" type="text" id="matricNo2" placeholder="Student's Matric Number"/><br/><br/>
+
+                    <br/><br/>
+
+                     <div class="panel-body">
+                        <form>
+                           
+                           <div class="col-sm-1">
+                              <div class="col-sm-2">
+                                 <div class="box" id="box2"></div>
+                                  <label id = "f2score"> </label>
+                                  <button for="box2" type="button" class="capture" id="capture">Capture</button>
+                              </div>
+                                
+                           </div>
+                        </form>
+                     </div>
 
 
+                    
+                    <input class = "compare" type='submit' id = 'upload' value='Verify'/>       
                 </TabPanel>
                 
 
@@ -453,8 +562,33 @@ class App extends Component {
                     <h class = 'heading' id="header3">Matriculation Number</h><br/>
                     <input class= "input" type="text" id="matricNo2" placeholder="Student's Matric Number"/><br/><br/>
                     <input class = "choose" type='file' id = 'choose' onChange={this.captureFile}/><br/>
-                    <br/>
-                    <input class = "button" type='submit' id = 'upload' value='Upload Certificate' onClick={this.uploadCertificate} />
+                    <h class = 'heading' id="header3">Students Fingerprint</h><br/>
+                    
+                    
+                    
+                      <div class="col-sm-1 animated fadeIn">
+                      
+                         <div class="panel-body">
+                            <form>
+                               
+                               <div class="col-sm-1">
+                                  <div class="col-sm-2">
+                                     <div class="box" id="box1"></div>
+                                      <label class="labelscore" id = "f1score"> </label>
+                                      <button for="box1" type="button" class="capture" id="capture">Capture</button>
+                                    
+                                    
+                               </div>
+                                  </div>
+                            </form>
+                            </div>
+                         
+                      </div>
+
+                    
+                    <input class = "button_upload" type='submit' id = 'upload' value='Upload Certificate' onClick={this.uploadCertificate} />
+
+
                     <br/>
                     <br/>
                   </form>

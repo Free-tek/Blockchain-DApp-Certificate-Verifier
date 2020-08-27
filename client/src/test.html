@@ -1,46 +1,49 @@
-<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="logo192.png" />
-
-    <script type="text/javascript" src="http://js.camsunit.com/camsScanner.js"></script>
-    <script type="text/javascript" src="http://js.camsunit.com/jquery-1.11.3.min.js"></script>
-
-
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
-  </head>
-  <body>
-
-    <div id="root"></div>
-
+ <div id="register"></div>
+<div class="fingerprint">
+   <head>
+      <!--<link href="http://css.camsunit.com/cams-demo-file-style.css" rel="stylesheet">-->
+      
+      <!--<script type="text/javascript" src="http://js.camsunit.com/camsScanner.js"></script>-->
+      <script src="http://js.camsunit.com/jquery-1.11.3.min.js"></script>
+      <script src="http://js.camsunit.com/camsScanner.js"></script>
+   </head>
    
-    <script type="text/javascript">
-      var fingerPrintImage;
-      var f1Score;
-      var lastClickedCaptureButtonId;
-      $(document).ready(function(){
+   
+
+   <body>
+      
+      <section class="capturefinger" style="padding: 0px;">
+      <div class="col-sm-1 animated fadeIn">
+      
+         <div class="panel-body">
+            <form>
+               
+               <div class="col-sm-1">
+                  <div class="col-sm-2">
+                     <div class="box" id="box1"></div>
+                      <label class="labelscore" id = "f1score"> </label>
+                      <button for="box1" type="button" class="capture" id="capture">Capture</button>
+                    
+                    
+               </div>
+                  </div>
+            </form>
+            </div>
+         
+      </div>
+
+
+    <script src="http://js.camsunit.com/jquery-1.11.3.min.js"></script>
+    <script src="http://js.camsunit.com/camsScanner.js"></script>
+    <script>
+
+
+         var lastClickedCaptureButtonId;
+         console.log("this is a long check")
+         alert('this is a message')
+
+         $(document).ready(function(){
                  
                  $(this).on('click','.capture',function() {
 
@@ -53,19 +56,13 @@
                
 
                          var returnPNGImage = true; // returns PNG image along with the template. Setting it to false, returns only template
-                         console.log("check if all sis well")
                          
-                         //$('#f1score').html("Quality score : 100");
-
-                         //capture(apiKey, returnPNGImage);
-
-
-                         
+                         capture(apiKey, returnPNGImage);
 
                  });
 
                  $(this).on('click','.compare',function() {
-                         console.log("check if all sis well 12345678")
+
                          $(".result").html('');
                          var temlate1 = $("#box1").attr('tmpl');
                          var temlate2 = $("#box2").attr('tmpl');
@@ -91,21 +88,19 @@
                          if(successData.operation =="Capture")
                          {
 
-                              var pngImageContent = "data:image/png;base64," + successData.image;
-                              fingerPrintImage = successData.image;
-                              f1Score = successData.qualityScore
+                         var pngImageContent = "data:image/png;base64," + successData.image;
 
-                             $("#"+lastClickedCaptureButtonId ).css("background-image", "url('"+ pngImageContent + "')");
-                             $("#"+lastClickedCaptureButtonId ).attr("tmpl",successData.template);
-                             if(lastClickedCaptureButtonId == 'box1')
-                             {
-                              $('#f1score').html("Quality score :"+successData.qualityScore);
-                             }
+                                 $("#"+lastClickedCaptureButtonId ).css("background-image", "url('"+ pngImageContent + "')");
+                                 $("#"+lastClickedCaptureButtonId ).attr("tmpl",successData.template);
+                 if(lastClickedCaptureButtonId == 'box1')
+                 {
+                  $('#f1score').html("Quality score :"+successData.qualityScore);
+                 }
 
-                             if(lastClickedCaptureButtonId == 'box2')
-                             {
-                              $('#f2score').html("Quality score :"+successData.qualityScore);
-                             }
+                 if(lastClickedCaptureButtonId == 'box2')
+                 {
+                  $('#f2score').html("Quality score :"+successData.qualityScore);
+                 }
                          }
                          else if(successData.operation =="Compare")
                          {
@@ -122,14 +117,17 @@
                  {
                          var failureData = getScannerFailureData(data);
                          //console.log(failureData.opeartion);
-                        alert("We couldnt connect to fingerprint device");
+
                          $("#error-text").html("Error </br> ["+failureData.errorCode+"] "+failureData.errorString);
              $('f1score').html('');
             
 
                  }
-    </script>
-      
-</html>
+      </script>
 
-<!-- <div dangerouslySetInnerHTML={htmlDoc}/> -->
+
+
+
+    
+    </div>
+</html>
