@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "classlist.js": "^1.1.20150312",
     "dangerously-set-html-content": "^1.0.8",
     "html-react-parser": "^0.13.0",
     "ipfs-api": "^26.1.2",

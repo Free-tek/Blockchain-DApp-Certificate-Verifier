@@ -1,0 +1,25 @@
+{
+  "name": "blockchain-dapp-certificate-verifier",
+  "version": "1.0.0",
+  "description": "This is a DApp that verifies university certificates stored on the blockchain. \r <br> Certificates can be looked up using QRCodes or by passing meta data about the certificate like the \r student's matric number, first name and surname",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Free-tek/Blockchain-DApp-Certificate-Verifier.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Free-tek/Blockchain-DApp-Certificate-Verifier/issues"
+  },
+  "homepage": "https://github.com/Free-tek/Blockchain-DApp-Certificate-Verifier#readme",
+  "dependencies": {
+    "truffle": "^5.1.42"
+  }
+}

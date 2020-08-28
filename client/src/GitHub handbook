@@ -26,3 +26,6 @@ Edit from way in the future: I updated my git shell the other week and noticed 
 
 
 
+************************* Writting to blockchain reciept*****************************
+
+ {tx: "0x979ab32fd0d954a875a20f9a80596dae6b872d02023b078f9fb54c7c3c315832", receipt: {…}, logs: Array(0)}logs: []receipt: {transactionHash: "0x979ab32fd0d954a875a20f9a80596dae6b872d02023b078f9fb54c7c3c315832", transactionIndex: 0, blockHash: "0x0abaee65057d631f38b1df92d75c2f6815265595452c8cfac4e2bce96a5c4454", blockNumber: 5, from: "0xd6fa9bf2de9a20b3f8fabb6319dd49980130072a", …}tx: "0x979ab32fd0d954a875a20f9a80596dae6b872d02023b078f9fb54c7c3c315832"__proto__: ObjectTerminate

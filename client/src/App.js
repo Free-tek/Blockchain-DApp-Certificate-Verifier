@@ -14,15 +14,14 @@ import download from './download.png'
 import { render } from 'react-dom';
 import * as $ from 'jquery'
 import ScriptTag from 'react-script-tag';
-import InnerHTML from 'dangerously-set-html-content'
-
+import InnerHTML from 'dangerously-set-html-content';
 
 
 import "./App.css";
-import html from './test.html';
-import html2 from './verifyFingerprint.html';
-var htmlDoc = {__html: html};
-var fingerprintHTML = {__html: html2};
+//import html from './test.html';
+//import html2 from './verifyFingerprint.html';
+//var htmlDoc = {__html: html};
+//var fingerprintHTML = {__html: html2};
 
 
 class App extends Component {
@@ -32,9 +31,6 @@ class App extends Component {
 
   async componentDidMount(){
 
-
-    
-    
     // Get network provider and web3 instance.    
     this.initWeb3();
 
@@ -43,8 +39,6 @@ class App extends Component {
   initWeb3 = async () =>{ 
 
     console.log("i got here")
-
-
 
     getWeb3
     .then(results => {
@@ -76,7 +70,6 @@ class App extends Component {
       ipfsHash : '',
       web3: null,
       buffer: null,
-      fingerprintBuffer: null,
       account: null
     }
   
@@ -84,7 +77,7 @@ class App extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.uploadCertificate = this.uploadCertificate.bind(this);
     this.uploadQR = this.uploadQR.bind(this);
-    this.convertFingerPrintBuffer = this.convertFingerPrintBuffer.bind(this);
+    //this.convertFingerPrintBuffer = this.convertFingerPrintBuffer.bind(this);
     this.verifyCertificateFingerPrint = this.verifyCertificateFingerPrint.bind(this);
 
   }
@@ -129,9 +122,10 @@ class App extends Component {
       
   }
 
+  /*
   convertFingerPrintBuffer(event){
     this.state.fingerprintBuffer =  new Buffer(window.fingerPrintImage, 'binary').toString('base64')
-  }
+  }*/
 
   verifyCertificateFingerPrint(event){
     event.preventDefault()
@@ -279,9 +273,8 @@ class App extends Component {
 
   uploadCertificate(event) {
 
+    console.log("this is the fingerprintImage", window.fingerPrintImageBuffer);
     
-    console.log("this is the fingerprintImage", window.fingerPrintImage);
-
     event.preventDefault()
     var firstName = document.getElementById('firstName2').value
     var surname = document.getElementById('surname2').value
@@ -289,55 +282,47 @@ class App extends Component {
     
     if(firstName.length==0){
       alert("Firstname cannot be empty");
-      document.getElementById('firstName').innerHTML = "Firstname cannot be empty";
+      
     }else if(surname.length == 0){
       alert("Surname cannot be empty");
-      document.getElementById('surname').innerHTML = "Surname cannot be empty";
+      
     }else if(matricNo.length == 0){
       alert("Matriculation Number cannot be empty");
-      document.getElementById('matricNo').innerHTML = "Matriculation Number cannot be empty";
+      
     }
-    /*
-    else if(window.fingerPrintImage.length == 0){
-      alert("Please repeat fingerprint capturing");
-      document.getElementById('matricNo').innerHTML = "Matriculation Number cannot be empty";
+    else if(window.fingerPrintImageBuffer == null){
+      alert("Please capture your fingerprint");
     }
-    */
-    /*
     else if(window.f1Score < 50){
       alert("Faint thumb printing image, Please repeat fingerprint capturing");
-      document.getElementById('matricNo').innerHTML = "Matriculation Number cannot be empty";
     }
-    */
+    
 
     
 
     else{
             
-
+      //-----set
 
       
-      console.log('upload...')
-
-      //-----set
       ipfs.files.add(this.state.buffer, (error, result) => {
         if(error) {
           console.error(error)
-          alert("Upload Unsuccessful");
+          alert("Upload Unsuccessful certificate");
           return
         }
-        ipfs.files.add(this.state.fingerprintBuffer, (error, resultFingerPrint) => {
+        ipfs.files.add(Buffer.from(window.fingerPrintImageBuffer), (error, resultFingerPrint) => {
           if(error) {
             console.error(error)
-            alert("Upload Unsuccessful");
+            alert("Upload Unsuccessful fingerPrint");
             return
           }
 
           this.simpleStorageInstance.setFingerPrint(matricNo, resultFingerPrint[0].hash, { from: this.state.account }).then((r) => {
-
+            console.log("transaction result from blockchain", r);
           })
 
-          this.simpleStorageInstance.set(firstName, surname, matricNo, result[0].hash, { from: this.state.account }).then((r) => {
+          this.simpleStorageInstance.set(firstName, surname, matricNo, result[0].hash, resultFingerPrint[0].hash,  { from: this.state.account }).then((r) => {
             
 
             var img = document.getElementById("success2");
@@ -389,6 +374,7 @@ class App extends Component {
         
         })
       })
+      
 
       
 
@@ -408,6 +394,7 @@ class App extends Component {
       <div class="App">
         
         <div class="header">
+
                 <img src={logo} />
                 <h1>Nigerian Tulip International Colleges</h1>
                 <p>Verify Candidate Certificates Stored Securely On The Blockchain.</p>

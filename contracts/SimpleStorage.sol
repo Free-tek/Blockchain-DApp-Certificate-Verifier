@@ -14,6 +14,7 @@ contract SimpleStorage {
 
   struct studentInfoFingerPrint{
         string matricNo;
+        string ipfsHash;
         string ipfsHashFingerprint;
   }
     
@@ -40,8 +41,9 @@ contract SimpleStorage {
     
   }
 
-  function setFingerPrint(string memory _matricNo, string memory _ipfsHashFingerprint) public {
-    AllStudentsFingerPrint[matricNo].ipfsHashFingerprint = _ipfsHashFingerprint;
+  function setFingerPrint(string memory _matricNo, string memory _ipfsHash, string memory _ipfsHashFingerprint) public {
+    AllStudentsFingerPrint[_matricNo].ipfsHash = _ipfsHash;
+    AllStudentsFingerPrint[_matricNo].ipfsHashFingerprint = _ipfsHashFingerprint;
   }
 
   function getFingerPrint(string memory _matricNo) public view returns (string memory) {
