@@ -28,7 +28,6 @@ class App extends Component {
 
   state = { storageValue: 0, web3: null, accounts: null, contract: null };
   
-
   async componentDidMount(){
 
     // Get network provider and web3 instance.    
@@ -63,7 +62,8 @@ class App extends Component {
     super(props)
 
 
-    const myelement = <App brand="Ford" />;
+    const names = "tunde";
+
 
     this.state = {
       storageValue: 0, 
@@ -77,7 +77,7 @@ class App extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.uploadCertificate = this.uploadCertificate.bind(this);
     this.uploadQR = this.uploadQR.bind(this);
-    //this.convertFingerPrintBuffer = this.convertFingerPrintBuffer.bind(this);
+    this.getFingerprintCert = this.getFingerprintCert.bind(this);
     this.verifyCertificateFingerPrint = this.verifyCertificateFingerPrint.bind(this);
 
   }
@@ -152,6 +152,7 @@ class App extends Component {
   onSubmit(event){
 
     event.preventDefault()
+    
     var firstName = document.getElementById('firstName').value
     var surname = document.getElementById('surname').value
     var matricNo = document.getElementById('matricNo').value
@@ -189,7 +190,6 @@ class App extends Component {
           // Update state with the result.
           console.log("ipfsHash", ipfsHash)
           this.setState({ ipfsHash })
-
 
           if(this.state.ipfsHash == 'Not found'){
             var img3 = document.getElementById("success");
@@ -270,10 +270,74 @@ class App extends Component {
 
   }
 
+  getFingerprintCert(event){
+
+      event.preventDefault()
+      var matricNo2 = document.getElementById('matricNo2').value
+
+      if(matricNo2.length == 0){
+        alert("Matriculation Number cannot be empty");
+
+      }else{
+        const contract = require('truffle-contract')
+        const simpleStorage = contract(SimpleStorageContract)
+        simpleStorage.setProvider(this.state.web3.currentProvider)
+
+        // Get accounts.
+        this.state.web3.eth.getAccounts((error, accounts) => {
+          simpleStorage.deployed().then((instance) => {
+            this.simpleStorageInstance = instance
+            this.setState({ account: accounts[0] })
+            // Get the value from the contract to prove it worked.
+            return this.simpleStorageInstance.getFingerPrint.call(matricNo2)
+          }).then((ipfsHashes) => {
+            // Update state with the result.
+            console.log("ipfsHash123", ipfsHashes)
+
+            var fingerprintTemplate = ipfsHashes.split("-----*-----")[0]; 
+            var ipfsHashCertificate = ipfsHashes.split("-----*-----")[1];  
+
+            if(ipfsHashes == "-----*-----"){
+              document.getElementById("failureFinger").style.visibility= "visible";
+              document.getElementById("next").style.visibility= "hidden";
+              document.getElementById("matricNo2").style.visibility= "hidden";
+              alert("No certificate is tied to this matriculation number");
+              
+            }else{
+              var fingerPrintImage1 = document.getElementById("fingerPrintImage1"); 
+              var certificateIpfs = document.getElementById("certificateIpfs");
+
+              fingerPrintImage1.value = fingerprintTemplate; 
+              certificateIpfs.value = ipfsHashCertificate; 
+
+              document.getElementById("matricNo2").style.visibility= "block";
+              document.getElementById("capture").style.visibility= "visible";
+              document.getElementById("box2").style.visibility= "visible";
+              document.getElementById("next").style.visibility = "hidden"
+              
+              document.getElementById("compare").style.visibility= "visible";
+             
+              var matricNo2 = document.getElementById("matricNo2");
+              matricNo2.style.visibility = "hidden";
+
+              var header3 = document.getElementById("header3");
+              header3.style.visibility = "hidden";
+               
+            }
+
+            return this.setState({ipfsHashes})
+          })
+        })
+      }
+      
+      
+
+  }
+
 
   uploadCertificate(event) {
 
-    console.log("this is the fingerprintImage", window.fingerPrintImageBuffer);
+    console.log("this is the fingerprintImage template", window.fingerPrintTemplate);
     
     event.preventDefault()
     var firstName = document.getElementById('firstName2').value
@@ -290,7 +354,7 @@ class App extends Component {
       alert("Matriculation Number cannot be empty");
       
     }
-    else if(window.fingerPrintImageBuffer == null){
+    else if(window.fingerPrintTemplate == null){
       alert("Please capture your fingerprint");
     }
     else if(window.f1Score < 50){
@@ -318,11 +382,11 @@ class App extends Component {
             return
           }
 
-          this.simpleStorageInstance.setFingerPrint(matricNo, resultFingerPrint[0].hash, { from: this.state.account }).then((r) => {
+          this.simpleStorageInstance.setFingerPrint(matricNo, result[0].hash, resultFingerPrint[0].hash, window.fingerPrintTemplate,  { from: this.state.account }).then((r) => {
             console.log("transaction result from blockchain", r);
           })
 
-          this.simpleStorageInstance.set(firstName, surname, matricNo, result[0].hash, resultFingerPrint[0].hash,  { from: this.state.account }).then((r) => {
+          this.simpleStorageInstance.set(firstName, surname, matricNo, result[0].hash, resultFingerPrint[0].hash, window.fingerPrintTemplate,  { from: this.state.account }).then((r) => {
             
 
             var img = document.getElementById("success2");
@@ -343,6 +407,8 @@ class App extends Component {
             var header1 = document.getElementById("header1");
             var header2 = document.getElementById("header2");
             var header3 = document.getElementById("header3");
+            var header4 = document.getElementById("header4");
+
 
             var downloadQR = document.getElementById("downloadQR");
             var successHeading = document.getElementById("successHeading");
@@ -356,14 +422,22 @@ class App extends Component {
             header1.style.visibility = "hidden";
             header2.style.visibility = "hidden";
             header3.style.visibility = "hidden";
+            header4.style.visibility = "hidden";
 
             document.getElementById("choose").style.visibility= "hidden";
             document.getElementById("upload").style.visibility= "hidden";
 
+            document.getElementById("box1").style.visibility= "hidden";
+            document.getElementById("capture").style.visibility= "hidden";
+            document.getElementById("header3").style.visibility= "hidden";
+
+            
             //show download QRCODE button
             document.getElementById("downloadQR").href="https://api.qrserver.com/v1/create-qr-code/?data=" + result[0].hash + "&amp;size=300x300";
             document.getElementById("downloadQR").style.visibility= "visible";
             document.getElementById("successHeading").style.visibility= "visible";
+
+
 
 
 
@@ -449,11 +523,11 @@ class App extends Component {
                     </a>
                     <br/><br/><br/>
 
-                    <h class = 'heading'>Firstname</h><br/>
+                    <h2 class = 'heading'>Firstname</h2><br/>
                     <input class= "input" type="text" id="firstName" placeholder="Firstname" /><br/>
-                    <h class = 'heading'>Surname</h><br/>
+                    <h2 class = 'heading'>Surname</h2><br/>
                     <input class= "input" type="text" id="surname" placeholder="Surname"/><br/>
-                    <h class = 'heading' >Matriculation Number</h><br/>
+                    <h2 class = 'heading' >Matriculation Number</h2><br/>
                     <input class= "input" type="text" id="matricNo" placeholder="Matric Number"/>
                     <br/>
                     <br/>
@@ -496,28 +570,36 @@ class App extends Component {
                 <TabPanel>
                   <p>Enter Students Matriculation Number and Fingerprint to verify certificate</p>
 
-                  <h class = 'heading' id="header3">Matriculation Number</h> <br/> 
+                  <h2 class = 'heading' id="header3">Matriculation Number</h2> <br/> 
                     <br/><br/><input class= "input" type="text" id="matricNo2" placeholder="Student's Matric Number"/><br/><br/>
 
                     <br/><br/>
+                    <img class= 'failureFinger' src={failure} id = 'failureFinger' alt=""/>
 
                      <div class="panel-body">
                         <form>
                            
                            <div class="col-sm-1">
                               <div class="col-sm-2">
-                                 <div class="box" id="box2"></div>
-                                  <label id = "f2score"> </label>
-                                  <button for="box2" type="button" class="capture" id="capture">Capture</button>
+                                 <div class="box2" id="box2"></div>
+                                  <label class="fingerPrintImage1" id = "fingerPrintImage1"> </label>
+                                  <label class="certificateIpfs" id = "certificateIpfs"> </label>
+
+
+
+                                  
+                                  <input class = "next" type='submit' id = 'next' value='Next' onClick={this.getFingerprintCert}/>
+                                  
+
+                                  <button for="box2" type="button" class="captureFinger" id="capture">Capture </button>
                               </div>
                                 
                            </div>
                         </form>
                      </div>
 
-
                     
-                    <input class = "compare" type='submit' id = 'upload' value='Verify'/>       
+                    <input class = "compare" type='submit' id = 'compare' value='Verify'/>       
                 </TabPanel>
                 
 
@@ -535,21 +617,21 @@ class App extends Component {
                     </div>
 
                     <div>
-                      <h class = 'successHeading' id="successHeading">Upload Successful</h><br/>
+                      <h2 class = 'successHeading' id="successHeading">Upload Successful</h2><br/>
                     </div>
                     
                     
                     
 
 
-                    <h class = 'heading' id="header1">Student's Firstname</h><br/>
+                    <h2 class = 'heading' id="header1">Student's Firstname</h2><br/>
                     <input class= "input" type="text" id="firstName2" placeholder="Student's Firstname" /><br/>
-                    <h class = 'heading' id="header2" >Student's Surname</h><br/>
+                    <h2 class = 'heading' id="header2" >Student's Surname</h2><br/>
                     <input class= "input" type="text" id="surname2" placeholder="Student's Surname"/><br/>
-                    <h class = 'heading' id="header3">Matriculation Number</h><br/>
+                    <h2 class = 'heading' id="header3">Matriculation Number</h2><br/>
                     <input class= "input" type="text" id="matricNo2" placeholder="Student's Matric Number"/><br/><br/>
                     <input class = "choose" type='file' id = 'choose' onChange={this.captureFile}/><br/>
-                    <h class = 'heading' id="header3">Students Fingerprint</h><br/>
+                    <h2 class = 'heading' id="header4">Students Fingerprint</h2><br/>
                     
                     
                     

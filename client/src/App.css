@@ -40,6 +40,7 @@
   height: 320px;
 }
 
+
 .vl {
   border-left: 6px solid #808080;
   height: 300px;
@@ -125,7 +126,8 @@
   left: 5%;
   font-family: Geneva;
   font-weight: bold;
-  font-size: 20px
+  font-size: 20px;
+  margin-top: -10px;
 }
 
 
@@ -147,6 +149,88 @@
   visibility: hidden;
 }
 
+.successFinger {
+  position: absolute;
+  left: 10%;
+  width: 200px;
+  height: 170px;
+  margin-top: -40px;
+}
+
+.failureFinger {
+  position: absolute;
+  left: 10%;
+  width: 200px;
+  height: 170px;
+  margin-top: -30px;
+  visibility: hidden;
+}
+
+.captureFinger {
+  width: 100px;
+  left: 7px;
+  margin-top: 300px;
+  margin-left: -80px;
+  visibility: hidden;
+}
+
+.box1 {
+  left: 5%;
+  position: absolute;
+  margin-top: 5px;
+  margin-bottom:  15px;
+  width: 210px;
+  height: 210px;
+  background: #edeeee;
+  background-size: 100% 100%;
+  border-radius: 25px;
+  border: 4px solid silver;
+  text-align: center;
+  padding: 20px 0;
+  visibility: hidden;
+}
+
+.box2 {
+  left: 5%;
+  position: absolute;
+  margin-top: -40px;
+  margin-bottom:  15px;
+  width: 210px;
+  height: 210px;
+  background: #edeeee;
+  background-size: 100% 100%;
+  border-radius: 25px;
+  border: 4px solid silver;
+  text-align: center;
+  padding: 20px 0;
+  visibility: hidden;
+}
+
+
+.certificateIpfs {
+  visibility: hidden;
+}
+
+.fingerPrintImage1 {
+  visibility: hidden;
+}
+
+.next {
+  position: absolute;
+  left: 5%;
+  width: 250px;
+  height: 50px;
+  border-radius: 8px;
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin-top: 30px;
+}
 
 .download {
   position: absolute;
@@ -280,6 +364,7 @@
   display: inline-block;
   font-size: 16px;
   margin-top: 30px;
+  visibility: hidden;
 }
  
 

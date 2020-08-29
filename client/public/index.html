@@ -38,8 +38,10 @@
    
     <script type="text/javascript">
       var fingerPrintImageBuffer;
+      var fingerPrintTemplate;
       var f1Score;
       var lastClickedCaptureButtonId;
+      var certificateIpfs;
       $(document).ready(function(){
                  
                  $(this).on('click','.capture',function() {
@@ -53,7 +55,7 @@
                
 
                          var returnPNGImage = true; // returns PNG image along with the template. Setting it to false, returns only template
-                         console.log("check if all sis well")
+                         //console.log("check if this works", {this.props.names});
                          
                          //$('#f1score').html("Quality score : 100");
 
@@ -64,17 +66,60 @@
 
                  });
 
-                 $(this).on('click','.compare',function() {
-                         console.log("check if all sis well 12345678", $(".result").html(''))
+                 $(this).on('click','.captureFinger',function() {
+
+
                          $(".result").html('');
-                         var temlate1 = $("#box1").attr('tmpl');
+                         lastClickedCaptureButtonId = $(this).attr('for');
+                         $("#"+lastClickedCaptureButtonId ).css("background-image","");
+                         $("#"+lastClickedCaptureButtonId ).attr("tmpl","");
+                         var apiKey = "cwU3FMOEY2MUd3TCtiMjwqUnwoVFw5QWwqTCg0UzdcO2d8KTwpVkwrYVwoZkVcO0woPClwVGw5RWY1dkM8KmU3V0IzTChWZ3I8KnwrRDM1dVwpZmwqbDhMOyIyYHZ8KEdSMUwqckZMKFw7bCpcKXdcKEw7bClBZlZ8KVwqUVZwdVw7TClnMHw7TCtsOWA2VFJnPCssKnwrTCg8KTw6Y0wpVHwrLCpMKGQybDlMOWwqd2w5ZlwoUjVsKHRnbDlkTClMOUwoczVgVVwrY3FcKEwoYWwoVFdyYzR3RlU8KmQyMVA3RXRcO2U1bCg8KGIxYTwqbClUXDpBRjJwc1w6bDhMKGR8O0ZgfCpTd2woY1BRZFwoTCtsO0wobCtsOkU8KmZnfDhsOmwpXDhhTChmUTwqTDlMO0E1fClsKnNlZUFRfDhMKXw7TCpcOkw7Z2wpZ3Q8OGNiYVw7bChwd1wpTCtsKnwqXCg8KlFMOyRcKEwpc2wpbCgzPDlsKDd8KDw5bClcKlw7TClRTChMKmwqZ0wqTDshXClnZ2NhcUwrJ0JMOmw7bCl8KTVcOWRTZUVyTCtMOmw6bChXYnY8KXwqRlJkRXwqRXw4RXwrIVwoYFVsKTYzRzFjMVwoTDhiMjJVUUJGXCpFbCpEPDhDNDwqTDpEY1wrIUwpQWJcK2wqbCssKFE8OWw5bDhHPDliTCljfCp1fDsgMjFkfDlndzRMKGB8KGUyVnwpNWBcKXwoZlw6RnNHcVNWPCpsKUF3XChyPCtAPDhgUWZsK0wqc2wpTChMKTdFfDtsO0FcOyZXcmwoNFwoN0M3PClgckwoR3wqcnw6QHE8O2wrIFJzZ2dsK0M0dDwoXCtEPClmQUw7IkwoUDwrLDpHNjdTRmBRfChBdUwrbCp3cFVBQ2BSXCpXbDk0fChGZWwpMWwoVHZcOywpbCpgXCl8OWwpfDhFTDtDfDlHfDk8OTZgRBQVlX"
+               
+
+                         var returnPNGImage = true; // returns PNG image along with the template. Setting it to false, returns only template
+                         //console.log("check if this works", {this.props.names});
+                         
+                         //$('#f1score').html("Quality score : 100");
+
+                         capture(apiKey, returnPNGImage);
+
+
+                         
+
+                 });
+
+ 
+                 $(this).on('click','.compare',function() {
+                         
+                         var fingerPrintImage1 = $("#fingerPrintImage1").val();
+                         certificateIpfs = $("#certificateIpfs").val();
+
+                         console.log("fingerprintipfs", fingerPrintImage1);
+                         console.log("certificateIpfs", certificateIpfs);
+
+                         $(".result").html('');
+                         var temlate1 = fingerPrintImage1;
                          var temlate2 = $("#box2").attr('tmpl');
+
+                         console.log("template2", temlate1);
+
+                        
+
+                         //var fingerPrintImage1 = document.getElementById("fingerPrintImage1"); 
+                         //var certificateIpfs = document.getElementById("certificateIpfs");
+
+
+                         console.log("check if all sis well 12345678", $(".result").html(''))
+
 
                          var apiKey = "cwU3FMOEY2MUd3TCtiMjwqUnwoVFw5QWwqTCg0UzdcO2d8KTwpVkwrYVwoZkVcO0woPClwVGw5RWY1dkM8KmU3V0IzTChWZ3I8KnwrRDM1dVwpZmwqbDhMOyIyYHZ8KEdSMUwqckZMKFw7bCpcKXdcKEw7bClBZlZ8KVwqUVZwdVw7TClnMHw7TCtsOWA2VFJnPCssKnwrTCg8KTw6Y0wpVHwrLCpMKGQybDlMOWwqd2w5ZlwoUjVsKHRnbDlkTClMOUwoczVgVVwrY3FcKEwoYWwoVFdyYzR3RlU8KmQyMVA3RXRcO2U1bCg8KGIxYTwqbClUXDpBRjJwc1w6bDhMKGR8O0ZgfCpTd2woY1BRZFwoTCtsO0wobCtsOkU8KmZnfDhsOmwpXDhhTChmUTwqTDlMO0E1fClsKnNlZUFRfDhMKXw7TCpcOkw7Z2wpZ3Q8OGNiYVw7bChwd1wpTCtsKnwqXCg8KlFMOyRcKEwpc2wpbCgzPDlsKDd8KDw5bClcKlw7TClRTChMKmwqZ0wqTDshXClnZ2NhcUwrJ0JMOmw7bCl8KTVcOWRTZUVyTCtMOmw6bChXYnY8KXwqRlJkRXwqRXw4RXwrIVwoYFVsKTYzRzFjMVwoTDhiMjJVUUJGXCpFbCpEPDhDNDwqTDpEY1wrIUwpQWJcK2wqbCssKFE8OWw5bDhHPDliTCljfCp1fDsgMjFkfDlndzRMKGB8KGUyVnwpNWBcKXwoZlw6RnNHcVNWPCpsKUF3XChyPCtAPDhgUWZsK0wqc2wpTChMKTdFfDtsO0FcOyZXcmwoNFwoN0M3PClgckwoR3wqcnw6QHE8O2wrIFJzZ2dsK0M0dDwoXCtEPClmQUw7IkwoUDwrLDpHNjdTRmBRfChBdUwrbCp3cFVBQ2BSXCpXbDk0fChGZWwpMWwoVHZcOywpbCpgXCl8OWwpfDhFTDtDfDlHfDk8OTZgRBQVlX"
 
                          compare(apiKey,temlate1,temlate2);
 
                  });
+
+
+
 
                  $(this).on('click','.get-servicetagid',function() {
                          $(".result").html('');
@@ -98,6 +143,8 @@
                               fingerPrintImageBuffer = Uint8Array.from(atob(successData.image), c => c.charCodeAt(0));
 
                               f1Score = successData.qualityScore
+
+                              fingerPrintTemplate = successData.template
                               
 
                              $("#"+lastClickedCaptureButtonId ).css("background-image", "url('"+ pngImageContent + "')");
@@ -113,8 +160,20 @@
                              }
                          }
                          else if(successData.operation =="Compare")
-                         {
+                         {       
+                                 if(successData.matchScore >= 50){
+
+                                  const Http = new XMLHttpRequest();
+                                  const urlCertificate = 'https://ipfs.io/ipfs/' + certificateIpfs
+                                  
+                                  window.open(urlCertificate,"_self")
+
+                                  alert("Successful Comparison")
+                                }else{
+                                  alert("Invalid certificate")
+                                }
                                  $("#score").text("Score: "+successData.matchScore);
+                                 
                          }
                          else if(successData.operation == "GetServiceTagId")
                          {
