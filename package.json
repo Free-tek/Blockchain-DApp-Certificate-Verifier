@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/Free-tek/Blockchain-DApp-Certificate-Verifier#readme",
   "dependencies": {
-    "truffle": "^5.1.42"
+    "truffle": "^5.7.1"
   }
 }
